@@ -1,0 +1,18 @@
+{
+  "name": "assetbots-cli",
+  "version": "1.0.0",
+  "description": "CLI for Assetbots API",
+  "type": "module",
+  "main": "assetbots.ts",
+  "scripts": {
+    "start": "npx tsx assetbots.ts"
+  },
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

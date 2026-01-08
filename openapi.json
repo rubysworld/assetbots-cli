@@ -1,0 +1,3344 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Assetbots API 1.0",
+    "description": "Use the Assetbots API to sync your Assetbots database with other software and apps used by your organization.",
+    "termsOfService": "https://www.assetbots.com:443/terms",
+    "contact": {
+      "name": "Assetbots",
+      "email": "hello@assetbots.com"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/assets": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Gets all of the assets in the database.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of assets to get, from 1 to 1,000.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The offset to start fetching at.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "Optionally filter the results based on one or more field keys. Uses OData-like syntax e.g., \"serialNumber eq 1234 and brand eq Apple\" (without quotes). Must be escaped properly for use in a query string.\r\nSupported comparison operators include: eq (equal), gt (greater-than), ge (greater-than-or-equal), lt (less-than), le (less-than-or-equal), nq (not-equal).\r\nSupported logical operators include: and, or.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Creates an asset.",
+        "requestBody": {
+          "description": "The asset data to create.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "You have reached your plan's asset limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/assets/{id}": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Gets the asset identified by the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The asset ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "An asset with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Updates an asset.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the asset to update.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The asset data to update.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A asset with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/check-ins": {
+      "post": {
+        "tags": [
+          "CheckIns"
+        ],
+        "summary": "Unassigns a set of assets from their assigned person or location by creating a new check-in.",
+        "requestBody": {
+          "description": "The check-in request.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request is authorized."
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "None of the specified assets could be checked in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/checkouts/{id}": {
+      "get": {
+        "tags": [
+          "Checkouts"
+        ],
+        "summary": "Gets the checkout identified by the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The checkout ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A checkout with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/checkouts": {
+      "post": {
+        "tags": [
+          "Checkouts"
+        ],
+        "summary": "Assigns a set of assets to a person or location by creating a new checkout.",
+        "requestBody": {
+          "description": "The checkout request.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Either the person or location was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "None of the specified assets were available for checkout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit."
+          }
+        }
+      }
+    },
+    "/v1/databases": {
+      "get": {
+        "tags": [
+          "Databases"
+        ],
+        "summary": "Gets the database that the current API credentials belong to.",
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/locations": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "Gets all of the locations in the database.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of locations to get, from 1 to 1,000.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The offset to start fetching at.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "Optionally filter the results based on one or more field keys. Uses OData-like syntax e.g., \"name eq Conference Room\" (without quotes). Must be escaped properly for use in a query string.\r\nSupported comparison operators include: eq (equal), gt (greater-than), ge (greater-than-or-equal), lt (less-than), le (less-than-or-equal), nq (not-equal).\r\nSupported logical operators include: and, or.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "Creates a location.",
+        "requestBody": {
+          "description": "The location data to create.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Location"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Location"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Location"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Location"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/locations/{id}/assets": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "Gets the collection of assets currently checked out to the location with the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The location ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of assets to get, from 1 to 1,000.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The offset to start fetching at.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckedOutAssetsDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/locations/{id}": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "Gets the location identified by the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The location ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A location with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "Updates a location.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the location to update.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The location data to update.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Location"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Location"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Location"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Location"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A location with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/notes": {
+      "get": {
+        "tags": [
+          "Notes"
+        ],
+        "summary": "Gets the all notes identified by the given target ID.",
+        "parameters": [
+          {
+            "name": "targetId",
+            "in": "query",
+            "description": "The ID of the related record (e.g., asset, person, location. etc.) to get notes for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of notes to get, from 1 to 1,000.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The offset to start fetching at.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Notes"
+        ],
+        "summary": "Creates an note.",
+        "requestBody": {
+          "description": "The note data to create.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteDocument"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/notes/{id}": {
+      "get": {
+        "tags": [
+          "Notes"
+        ],
+        "summary": "Gets the note identified by the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The note ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "An note with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Notes"
+        ],
+        "summary": "Updates an note.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id note to update.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The note data to update.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/people": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Gets all of the people in the database.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of people to get, from 1 to 1,000.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The offset to start fetching at.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "Optionally filter the results based on one or more field keys. Uses OData-like syntax e.g., \"email eq you@example.com and department eq HR\" (without quotes). Must be escaped properly for use in a query string.\r\nSupported comparison operators include: eq (equal), gt (greater-than), ge (greater-than-or-equal), lt (less-than), le (less-than-or-equal), nq (not-equal).\r\nSupported logical operators include: and, or.",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Creates a person.",
+        "requestBody": {
+          "description": "The person data to create.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Person"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Person"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Person"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Person"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/people/{id}/assets": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Gets the collection of assets currently checked out to the person with the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The person ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of assets to get, from 1 to 1,000.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The offset to start fetching at.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckedOutAssetsDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/people/{id}": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Gets the person identified by the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The person ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A person with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Updates a person.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the person to update.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The person data to update.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Person"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Person"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Person"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Person"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A person with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/repair-completions": {
+      "post": {
+        "tags": [
+          "RepairCompletions"
+        ],
+        "summary": "Complete a set of repairs.",
+        "requestBody": {
+          "description": "The repair completion request.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairCompletionRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairCompletionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairCompletionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairCompletionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request is authorized."
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "None of the specified assets were available for repair.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/repairs/{id}": {
+      "get": {
+        "tags": [
+          "Repairs"
+        ],
+        "summary": "Gets the repair identified by the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The repair ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A repair with the given ID could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/repairs": {
+      "post": {
+        "tags": [
+          "Repairs"
+        ],
+        "summary": "Creates a repair.",
+        "requestBody": {
+          "description": "The repair request.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request is authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairArrayDocument"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request is not authorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The request is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "None of the specified assets were available for repair.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your request limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "Gets the city.",
+            "nullable": true
+          },
+          "coordinate": {
+            "$ref": "#/components/schemas/Coordinate"
+          },
+          "country": {
+            "type": "string",
+            "description": "Gets the country.",
+            "nullable": true
+          },
+          "county": {
+            "type": "string",
+            "description": "Gets the county.",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Gets the postal code.",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "description": "Gets the state or region.",
+            "nullable": true
+          },
+          "street": {
+            "type": "string",
+            "description": "Gets the street.",
+            "nullable": true
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "Gets the timezone.",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "description": "Gets the unit or suite number.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "An address."
+      },
+      "Asset": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/RelatedCategory"
+          },
+          "checkout": {
+            "$ref": "#/components/schemas/RelatedCheckout"
+          },
+          "description": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "description": "Gets the asset's description.",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedLabel"
+            },
+            "description": "Gets a collection of labels applied to the asset.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "repair": {
+            "$ref": "#/components/schemas/RelatedRepair"
+          },
+          "reservation": {
+            "$ref": "#/components/schemas/RelatedReservation"
+          },
+          "tag": {
+            "maxLength": 48,
+            "minLength": 0,
+            "type": "string",
+            "description": "Gets the asset's tag ID.",
+            "nullable": true
+          },
+          "archived": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "updateDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "An asset."
+      },
+      "AssetArrayDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Asset"
+            },
+            "description": "Gets the document's data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "AssetPagedCollection": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Asset"
+            },
+            "nullable": true
+          },
+          "pageCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssetValue": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "description": "Gets the asset's description.",
+            "nullable": true
+          },
+          "tag": {
+            "type": "string",
+            "description": "Gets the asset's tag ID.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "An asset value."
+      },
+      "CheckIn": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedAsset"
+            },
+            "description": "Gets the check-in's assets."
+          },
+          "checkoutId": {
+            "type": "string",
+            "description": "Gets the ID of the checkout this check-in belongs to."
+          },
+          "date": {
+            "type": "string",
+            "description": "Gets the check-in date.",
+            "format": "date-time"
+          },
+          "error": {
+            "$ref": "#/components/schemas/Error"
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Gets the status of the check-in."
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "Gets a value indicating whether the object is archived.",
+            "nullable": true
+          },
+          "createDate": {
+            "type": "string",
+            "description": "Gets the date the record was created.",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "Gets a value indicating whether the object is deleted.",
+            "nullable": true
+          },
+          "updateDate": {
+            "type": "string",
+            "description": "Gets the date the record was last updated.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A check-in."
+      },
+      "CheckInRequest": {
+        "type": "object",
+        "properties": {
+          "assetIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckedOutAssets": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "$ref": "#/components/schemas/AssetPagedCollection"
+          },
+          "checkIns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CheckIn"
+            },
+            "description": "Gets the collection of check-ins related to this record's checkout collection."
+          },
+          "checkouts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Checkout"
+            },
+            "description": "Gets the collection of checkouts related to this record's asset collection."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A collection currently checked out assets and their related Checkout and CheckIn records."
+      },
+      "CheckedOutAssetsDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CheckedOutAssets"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "Checkout": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedAsset"
+            },
+            "description": "Gets the checkout's assets."
+          },
+          "date": {
+            "type": "string",
+            "description": "Gets the checkout date.",
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Gets the checkout due date, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "error": {
+            "$ref": "#/components/schemas/Error"
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/RelatedLocation"
+          },
+          "person": {
+            "$ref": "#/components/schemas/RelatedPerson"
+          },
+          "type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "status": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Gets the current status of the checkout."
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "Gets a value indicating whether the object is archived.",
+            "nullable": true
+          },
+          "createDate": {
+            "type": "string",
+            "description": "Gets the date the record was created.",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "Gets a value indicating whether the object is deleted.",
+            "nullable": true
+          },
+          "updateDate": {
+            "type": "string",
+            "description": "Gets the date the record was last updated.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A checkout."
+      },
+      "CheckoutArrayDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Checkout"
+            },
+            "description": "Gets the document's data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "CheckoutRequest": {
+        "type": "object",
+        "properties": {
+          "assetIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Gets a collection of asset IDs to checkout."
+          },
+          "date": {
+            "type": "string",
+            "description": "Gets the date of the checkout.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Gets the due date of the checkout, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "locationId": {
+            "type": "string",
+            "description": "Gets the ID of the location to checkout assets to, if applicable.",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "description": "Gets the notes to add to the checkout, if applicable.",
+            "nullable": true
+          },
+          "personId": {
+            "type": "string",
+            "description": "Gets the ID of the person to checkout assets to, if applicable.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A checkout request."
+      },
+      "CheckoutValue": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Gets the checkout date.",
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Gets the checkout due date, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/RelatedLocation"
+          },
+          "person": {
+            "$ref": "#/components/schemas/RelatedPerson"
+          },
+          "status": {
+            "type": "string",
+            "description": "Gets the current status of the checkout.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A checkout value."
+      },
+      "Coordinate": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "Gets the latitude.",
+            "format": "double",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Gets the longitude.",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A geo coordinate."
+      },
+      "Database": {
+        "required": [
+          "name",
+          "organizationName"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets the database ID."
+          },
+          "limits": {
+            "$ref": "#/components/schemas/DatabaseLimits"
+          },
+          "name": {
+            "maxLength": 48,
+            "minLength": 2,
+            "type": "string",
+            "description": "Gets the name of the database."
+          },
+          "organizationName": {
+            "maxLength": 128,
+            "minLength": 2,
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Gets the object's record type.",
+            "readOnly": true
+          },
+          "visibility": {
+            "type": "string",
+            "description": "Gets the visibility of the database. Valid values include \"Private\" and \"Public\".",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A workspace."
+      },
+      "DatabaseArrayDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Database"
+            },
+            "description": "Gets the document's data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "DatabaseLimits": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "automations": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "importAgreements": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "kits": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Gets the error code.",
+            "nullable": true
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": "Gets data associated with the error. Typically used for\r\ninput validation and keyed by input field name.",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "description": "Gets the error message.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "An error."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Error"
+          },
+          "nextUri": {
+            "$ref": "#/components/schemas/NextUri"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Returned when an operation results in an error."
+      },
+      "LabelValue": {
+        "type": "object",
+        "properties": {
+          "applyDate": {
+            "type": "string",
+            "description": "Gets the date the label was applied.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "description": "Gets the label's color. Valid values include: \"danger\", \"gray\", \"info\", \"primary\", \"secondary\", \"success\", \"warning\".",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets the label's name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A label value."
+      },
+      "Location": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedLabel"
+            },
+            "description": "Gets a collection of labels applied to the location."
+          },
+          "name": {
+            "maxLength": 64,
+            "minLength": 2,
+            "type": "string",
+            "description": "Gets the person's name."
+          },
+          "type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "archived": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "updateDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A location."
+      },
+      "LocationArrayDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Location"
+            },
+            "description": "Gets the document's data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "LocationValue": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets the location's name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A location value."
+      },
+      "NextUri": {
+        "type": "object",
+        "properties": {
+          "navigate": {
+            "type": "boolean",
+            "description": "Gets a value indicating whether to use client-only redirection.",
+            "nullable": true
+          },
+          "replace": {
+            "type": "boolean",
+            "description": "Gets a value indicating whether to replace the current client history entry.",
+            "nullable": true
+          },
+          "uri": {
+            "type": "string",
+            "description": "Gets the URI value.",
+            "format": "uri",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Describes a URI the server is requesting a client to redirect to."
+      },
+      "Note": {
+        "required": [
+          "targetId",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "targetId": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Gets the ID of the note's related record (e.g., asset, person, location. etc.)"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Gets the ID of the note's author.",
+            "nullable": true
+          },
+          "value": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Gets note text."
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "Gets a value indicating whether the object is archived.",
+            "nullable": true
+          },
+          "createDate": {
+            "type": "string",
+            "description": "Gets the date the record was created.",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "Gets a value indicating whether the object is deleted.",
+            "nullable": true
+          },
+          "updateDate": {
+            "type": "string",
+            "description": "Gets the date the record was last updated.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A Note."
+      },
+      "NoteArrayDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Note"
+            },
+            "description": "Gets the document's data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "NoteDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Note"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "Person": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedLabel"
+            },
+            "description": "Gets a collection of labels applied to the person."
+          },
+          "name": {
+            "maxLength": 64,
+            "minLength": 2,
+            "type": "string",
+            "description": "Gets the person's name."
+          },
+          "type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "archived": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "updateDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A person."
+      },
+      "PersonArrayDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            },
+            "description": "Gets the document's data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "PersonValue": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 128,
+            "minLength": 0,
+            "type": "string",
+            "description": "Gets the person's email.",
+            "format": "email",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets the person's name.",
+            "nullable": true
+          },
+          "title": {
+            "maxLength": 64,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A person value."
+      },
+      "RelatedAsset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets the ID of the target record.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Gets the type of the target record.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/AssetValue"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A relationship to an asset."
+      },
+      "RelatedCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "value": {
+            "type": "string",
+            "description": "Gets the category's name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A relationship to a category."
+      },
+      "RelatedCheckout": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets the ID of the target record.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Gets the type of the target record.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/CheckoutValue"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A relationship to a checkout."
+      },
+      "RelatedLabel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets the ID of the target record.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Gets the type of the target record.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/LabelValue"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A relationship to a label."
+      },
+      "RelatedLocation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets the ID of the target record.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Gets the type of the target record.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/LocationValue"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A relationship to a location."
+      },
+      "RelatedPerson": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets the ID of the target record.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Gets the type of the target record.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/PersonValue"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A relationship to a person."
+      },
+      "RelatedRepair": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets the ID of the target record.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Gets the type of the target record.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/RepairValue"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A relationship to a repair."
+      },
+      "RelatedReservation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets the ID of the target record.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Gets the type of the target record.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/ReservationValue"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A relationship to a reservation."
+      },
+      "Repair": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedAsset"
+            },
+            "description": "Gets the repair's assets.",
+            "nullable": true
+          },
+          "assigned": {
+            "$ref": "#/components/schemas/RelatedPerson"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Gets the repair's due date, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Gets the repair's description.",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedLabel"
+            },
+            "description": "Gets a collection of labels applied to the repair.",
+            "nullable": true
+          },
+          "repairDate": {
+            "type": "string",
+            "description": "Gets the repair date, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "status": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Gets the current status of the repair."
+          },
+          "archived": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "updateDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A repair."
+      },
+      "RepairArrayDocument": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Repair"
+            },
+            "description": "Gets the document's data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A JSON response document."
+      },
+      "RepairCompletionRequest": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "assetIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Gets a collection of asset IDs to complete the repairs."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Gets the notes to add to the repairs, if applicable.",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "description": "Gets the date of the repair completions, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Gets the current status of the repair completions."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A repair completion request."
+      },
+      "RepairRequest": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "assetIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Gets a collection of asset IDs to repair.",
+            "nullable": true
+          },
+          "assignedId": {
+            "type": "string",
+            "description": "Gets the ID of the person assigned to the repair, if applicable.",
+            "nullable": true
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Gets the repair's due date, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "description": "Gets the repair's description.",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "description": "Gets the notes to add to the repair, if applicable.",
+            "nullable": true
+          },
+          "repairDate": {
+            "type": "string",
+            "description": "Gets the date of the repair, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "status": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Gets the current status of the repair."
+          },
+          "archived": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "updateDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A repair request."
+      },
+      "RepairValue": {
+        "type": "object",
+        "properties": {
+          "assigned": {
+            "$ref": "#/components/schemas/RelatedPerson"
+          },
+          "description": {
+            "type": "string",
+            "description": "Gets the repair's description.",
+            "nullable": true
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Gets the repair's due date, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "repairDate": {
+            "type": "string",
+            "description": "Gets the date of the repair, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Gets the status of the repair.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A repair value."
+      },
+      "ReservationValue": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Gets the reservation date.",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Gets the reservation's end date, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/RelatedLocation"
+          },
+          "person": {
+            "$ref": "#/components/schemas/RelatedPerson"
+          },
+          "status": {
+            "type": "string",
+            "description": "Gets the reservation's current status.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A reservation value."
+      }
+    },
+    "securitySchemes": {
+      "API Key": {
+        "type": "apiKey",
+        "name": "X-Api-Key",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "API Key": [ ]
+    }
+  ],
+  "tags": [
+    {
+      "name": "Assets",
+      "description": "Assets are anything valuable you want to keep track of. Assetbots help you\r\ntrack their location, lifespan, depreciation and more."
+    },
+    {
+      "name": "CheckIns",
+      "description": "Check-ins unassign assets from people, locations or both."
+    },
+    {
+      "name": "Checkouts",
+      "description": "Checkouts assign assets to people, locations or both."
+    },
+    {
+      "name": "Databases",
+      "description": "Databases contain all of your asset data and settings."
+    },
+    {
+      "name": "Locations",
+      "description": "Locations are places, physical or otherwise, where assets can be assigned."
+    },
+    {
+      "name": "Notes",
+      "description": "Notes are a way to record important details or observations.\r\nUse notes to document updates, insights, or reminders related to assets and people."
+    },
+    {
+      "name": "People",
+      "description": "The People directory allows you to keep track of who has custody of assets."
+    },
+    {
+      "name": "RepairCompletions",
+      "description": "Repair completion is responsible for initiating, completing, or canceling repair operations."
+    },
+    {
+      "name": "Repairs",
+      "description": "Repairs extend asset lifetimes through routine and restorative maintenance."
+    }
+  ]
+}
