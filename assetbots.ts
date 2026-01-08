@@ -2,15 +2,33 @@
 
 import { program } from "commander";
 
+import { readFileSync, existsSync } from "fs";
+import { homedir } from "os";
+import { join } from "path";
+
 const API_BASE = "https://api.assetbots.com/v1";
+const CONFIG_PATH = join(homedir(), ".config", "assetbots", "credentials.json");
 
 function getApiKey(): string {
-  const key = process.env.ASSETBOTS_API_KEY;
-  if (!key) {
-    console.error("Error: ASSETBOTS_API_KEY environment variable is required");
-    process.exit(1);
+  // Check env var first
+  if (process.env.ASSETBOTS_API_KEY) {
+    return process.env.ASSETBOTS_API_KEY;
   }
-  return key;
+  
+  // Fall back to config file
+  if (existsSync(CONFIG_PATH)) {
+    try {
+      const config = JSON.parse(readFileSync(CONFIG_PATH, "utf-8"));
+      if (config.apiKey) {
+        return config.apiKey;
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }
+  
+  console.error("Error: ASSETBOTS_API_KEY not set and no config found at", CONFIG_PATH);
+  process.exit(1);
 }
 
 async function apiRequest(
