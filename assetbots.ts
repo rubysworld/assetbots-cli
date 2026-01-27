@@ -577,4 +577,87 @@ program
     console.log(JSON.stringify(result, null, 2));
   });
 
+// ===== LABELS =====
+
+interface LabelData {
+  id?: string;
+  name?: string;
+  color?: string;
+  description?: string;
+}
+
+program
+  .command("labels")
+  .description("List all available labels")
+  .option("-l, --limit <number>", "Maximum number of results", "100")
+  .option("-o, --offset <number>", "Offset to start at", "0")
+  .option("--json", "Output raw JSON")
+  .action(async (opts) => {
+    const result = (await apiRequest("/labels", {
+      params: {
+        limit: opts.limit,
+        offset: opts.offset,
+      },
+    })) as ApiResponse;
+
+    if (opts.json) {
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+
+    const labels = (result.data || []) as LabelData[];
+    if (!labels.length) {
+      console.log("No labels found.");
+      return;
+    }
+
+    const formatted = labels.map((l) => ({
+      id: l.id || "-",
+      name: l.name || "-",
+      color: l.color || "-",
+      description: l.description || "-",
+    }));
+
+    formatTable(formatted, ["id", "name", "color", "description"]);
+  });
+
+program
+  .command("label-add")
+  .description("Add a label to an asset")
+  .argument("<assetId>", "Asset ID or tag")
+  .argument("<labelName>", "Label name to add")
+  .option("--json", "Output raw JSON")
+  .action(async (assetId: string, labelName: string, opts) => {
+    const result = await apiRequest(`/assets/${assetId}/labels`, {
+      method: "POST",
+      body: { name: labelName },
+    });
+
+    if (opts.json) {
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+
+    console.log(`Label "${labelName}" added to asset ${assetId} successfully!`);
+  });
+
+program
+  .command("label-remove")
+  .description("Remove a label from an asset")
+  .argument("<assetId>", "Asset ID or tag")
+  .argument("<labelName>", "Label name to remove")
+  .option("--json", "Output raw JSON")
+  .action(async (assetId: string, labelName: string, opts) => {
+    const result = await apiRequest(`/assets/${assetId}/labels/${encodeURIComponent(labelName)}`, {
+      method: "DELETE",
+    });
+
+    if (opts.json) {
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+
+    console.log(`Label "${labelName}" removed from asset ${assetId} successfully!`);
+  });
+
 program.parse();
