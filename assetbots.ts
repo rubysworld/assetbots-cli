@@ -105,9 +105,17 @@ interface AssetData {
   id?: string;
   tag?: string;
   description?: string;
-  category?: { name?: string };
+  category?: { name?: string; value?: string };
   checkout?: { person?: { name?: string }; location?: { name?: string } };
-  labels?: { name: string }[];
+  labels?: { 
+    id?: string;
+    type?: string;
+    value?: { 
+      name?: string;
+      color?: string;
+      applyDate?: string;
+    };
+  }[];
   archived?: boolean;
   createDate?: string;
   updateDate?: string;
@@ -178,7 +186,7 @@ program
       category: a.category?.name || "-",
       assignedTo:
         a.checkout?.person?.name || a.checkout?.location?.name || "-",
-      labels: a.labels?.map((l) => l.name).join(", ") || "-",
+      labels: a.labels?.map((l) => l.value?.name).filter(Boolean).join(", ") || "-",
     }));
 
     formatTable(formatted, ["id", "tag", "description", "category", "assignedTo", "labels"]);
@@ -217,7 +225,7 @@ program
     console.log(`Description: ${a.description || "-"}`);
     console.log(`Category:    ${a.category?.name || "-"}`);
     console.log(`Assigned To: ${a.checkout?.person?.name || a.checkout?.location?.name || "-"}`);
-    console.log(`Labels:      ${a.labels?.map((l) => l.name).join(", ") || "-"}`);
+    console.log(`Labels:      ${a.labels?.map((l) => l.value?.name).filter(Boolean).join(", ") || "-"}`);
     console.log(`Archived:    ${a.archived ? "Yes" : "No"}`);
     console.log(`Created:     ${a.createDate || "-"}`);
     console.log(`Updated:     ${a.updateDate || "-"}`);
@@ -579,46 +587,48 @@ program
 
 // ===== LABELS =====
 
-interface LabelData {
-  id?: string;
-  name?: string;
-  color?: string;
-  description?: string;
-}
-
 program
   .command("labels")
-  .description("List all available labels")
-  .option("-l, --limit <number>", "Maximum number of results", "100")
-  .option("-o, --offset <number>", "Offset to start at", "0")
+  .description("List all unique labels from assets")
+  .option("-l, --limit <number>", "Maximum assets to scan", "1000")
   .option("--json", "Output raw JSON")
   .action(async (opts) => {
-    const result = (await apiRequest("/labels", {
-      params: {
-        limit: opts.limit,
-        offset: opts.offset,
-      },
+    console.error("Fetching assets to extract labels...");
+    
+    const result = (await apiRequest("/assets", {
+      params: { limit: opts.limit },
     })) as ApiResponse;
 
+    const assets = (result.data || []) as AssetData[];
+    
+    // Extract all unique labels
+    const labelSet = new Set<string>();
+    for (const asset of assets) {
+      if (asset.labels) {
+        for (const label of asset.labels) {
+          if (label.value?.name) {
+            labelSet.add(label.value.name);
+          }
+        }
+      }
+    }
+
+    const uniqueLabels = Array.from(labelSet).sort();
+
     if (opts.json) {
-      console.log(JSON.stringify(result, null, 2));
+      console.log(JSON.stringify({ labels: uniqueLabels }, null, 2));
       return;
     }
 
-    const labels = (result.data || []) as LabelData[];
-    if (!labels.length) {
+    if (!uniqueLabels.length) {
       console.log("No labels found.");
       return;
     }
 
-    const formatted = labels.map((l) => ({
-      id: l.id || "-",
-      name: l.name || "-",
-      color: l.color || "-",
-      description: l.description || "-",
-    }));
-
-    formatTable(formatted, ["id", "name", "color", "description"]);
+    console.log(`\nFound ${uniqueLabels.length} unique labels:\n`);
+    for (const label of uniqueLabels) {
+      console.log(`  - ${label}`);
+    }
   });
 
 program
@@ -628,9 +638,80 @@ program
   .argument("<labelName>", "Label name to add")
   .option("--json", "Output raw JSON")
   .action(async (assetId: string, labelName: string, opts) => {
-    const result = await apiRequest(`/assets/${assetId}/labels`, {
+    // Get the current asset
+    const getResult = (await apiRequest(`/assets/${assetId}`)) as ApiResponse;
+    const assets = (getResult.data || []) as AssetData[];
+    
+    if (!assets.length) {
+      console.error(`Asset ${assetId} not found.`);
+      process.exit(1);
+    }
+
+    const asset = assets[0];
+    const currentLabels = asset.labels || [];
+    
+    // Check if label already exists on this asset
+    if (currentLabels.some((l) => l.value?.name === labelName)) {
+      console.log(`Label "${labelName}" already exists on asset ${assetId}.`);
+      return;
+    }
+
+    // Fetch all assets to find existing labels
+    console.error("Looking up existing labels...");
+    const allAssetsResult = (await apiRequest("/assets", {
+      params: { limit: 1000 },
+    })) as ApiResponse;
+    const allAssets = (allAssetsResult.data || []) as AssetData[];
+    
+    // Find the label if it exists
+    let existingLabel = null;
+    for (const a of allAssets) {
+      if (a.labels) {
+        for (const label of a.labels) {
+          if (label.value?.name === labelName) {
+            existingLabel = label;
+            break;
+          }
+        }
+      }
+      if (existingLabel) break;
+    }
+
+    if (!existingLabel) {
+      console.error(`\nError: Label "${labelName}" does not exist in the system.`);
+      console.error('Please create it in the Assetbots web interface first.');
+      console.error('\nExisting labels:');
+      const labelSet = new Set<string>();
+      for (const a of allAssets) {
+        if (a.labels) {
+          for (const label of a.labels) {
+            if (label.value?.name) {
+              labelSet.add(label.value.name);
+            }
+          }
+        }
+      }
+      Array.from(labelSet).sort().forEach((name) => console.error(`  - ${name}`));
+      process.exit(1);
+    }
+
+    // Add the label with full structure (required by API)
+    const updatedLabels = [
+      ...currentLabels,
+      {
+        id: existingLabel.id,
+        type: "label",
+        value: {
+          name: existingLabel.value!.name,
+          color: existingLabel.value!.color,
+        },
+      },
+    ];
+    
+    // Update the asset
+    const result = await apiRequest(`/assets/${asset.id}`, {
       method: "POST",
-      body: { name: labelName },
+      body: { labels: updatedLabels },
     });
 
     if (opts.json) {
@@ -638,7 +719,7 @@ program
       return;
     }
 
-    console.log(`Label "${labelName}" added to asset ${assetId} successfully!`);
+    console.log(`✓ Label "${labelName}" added to asset ${assetId} successfully!`);
   });
 
 program
@@ -648,8 +729,31 @@ program
   .argument("<labelName>", "Label name to remove")
   .option("--json", "Output raw JSON")
   .action(async (assetId: string, labelName: string, opts) => {
-    const result = await apiRequest(`/assets/${assetId}/labels/${encodeURIComponent(labelName)}`, {
-      method: "DELETE",
+    // Get the current asset
+    const getResult = (await apiRequest(`/assets/${assetId}`)) as ApiResponse;
+    const assets = (getResult.data || []) as AssetData[];
+    
+    if (!assets.length) {
+      console.error(`Asset ${assetId} not found.`);
+      process.exit(1);
+    }
+
+    const asset = assets[0];
+    const currentLabels = asset.labels || [];
+    
+    // Check if label exists
+    if (!currentLabels.some((l) => l.value?.name === labelName)) {
+      console.log(`Label "${labelName}" not found on asset ${assetId}.`);
+      return;
+    }
+
+    // Remove the label
+    const updatedLabels = currentLabels.filter((l) => l.value?.name !== labelName);
+    
+    // Update the asset
+    const result = await apiRequest(`/assets/${asset.id}`, {
+      method: "POST",
+      body: { labels: updatedLabels },
     });
 
     if (opts.json) {
@@ -657,7 +761,7 @@ program
       return;
     }
 
-    console.log(`Label "${labelName}" removed from asset ${assetId} successfully!`);
+    console.log(`✓ Label "${labelName}" removed from asset ${assetId} successfully!`);
   });
 
 program.parse();
